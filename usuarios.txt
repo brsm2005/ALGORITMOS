@@ -1,0 +1,1 @@
+{'nombre': 'BRYAN SALVADOR', 'identificacion': '1753655172', 'edad': '19', 'contraseña': 'Brsm2005@', 'usuario': 'bryan.salvador@gmail.com'}

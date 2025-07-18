@@ -1,0 +1,1 @@
+{'NARUTO': {'nombre': 'NARUTO', 'fuerza': '100', 'agilidad': '98', 'resistencia': 'Alta', 'estilo': 'Taijutsu (cuerpo a cuerpo)', 'habilidades': None, 'puntos': 0}}

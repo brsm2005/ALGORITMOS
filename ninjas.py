@@ -1,7 +1,32 @@
 #Bryan Salvador
 import os
 archivoUsuarios="usuarios.txt"
+archivoNinjas="ninjas.txt"
 usuarios=[]
+habilidadesNinjas={"valor":"Dominio armas",
+                    "izquierda":{"valor":"Cuchillas",
+                                "izquierda":{"valor":"Dagas",
+                                                "izquierda":None,
+                                                "derecha":None},
+                                "derecha":{"valor":"Estrellas Ninjas",
+                                            "izquierda":None,
+                                            "derecha":None} 
+                                },
+                    "derecha":{"valor":"Destrezas",
+                                "izquierda":{"valor":"Patadas",
+                                            "izquierda":None,
+                                            "derecha":None},
+                                "derecha":{"valor":"Artes Marciales",
+                                            "izquierda":{"valor":"Kun-fu",
+                                                        "izquierda":None,
+                                                        "derecha":None},
+                                            "derecha":{"valor":"Karate",
+                                                    "izquierda":None,
+                                                    "derecha":None}
+                                            }
+                                }
+                    }
+
 def registrarse(archivoUsuarios):
     if not os.path.exists(archivoUsuarios):
         try:
@@ -73,6 +98,199 @@ def registrarse(archivoUsuarios):
         print(f'''Su usuario es: {usuario} y su contraseña es: {contraseña}''')
         print("Registrado con éxito")
 
+def agregarNinjas(archivoNinjas):
+    ninjas = []
+    if os.path.exists(archivoNinjas):
+        with open(archivoNinjas,"r") as archivo:
+            for linea in archivo:
+                ninja=eval(linea.strip())
+                ninjas.append(ninja)
+        
+        nombreNinja= input("Ingrese el nombre del ninja: ").strip()
+        if nombreNinja.isalpha():
+            for i in range(len(ninjas)):
+                if ninjas[i]["nombre"] == nombreNinja:
+                    print("El ninja ya existe")
+                    return
+            pass
+        else:
+            print("Solo se permiten letras en el nombre del ninja.")
+            return
+    else:
+        nombreNinja= input("Ingrese el nombre del ninja: ").strip()
+    
+    while True:
+        fuerza=input("Ingrese la fuerza de ataque del ninja (1-100): ")
+        agilidad=input("Ingrese la velocidad de ataque del ninja (1-100): ")
+        if (not fuerza.isdigit() or not 1 <=int(fuerza)<= 100) or (not agilidad.isdigit() or not 1 <=int(agilidad)<= 100):
+            print("La fuerza y la agilidad del ninja debe ser un número entre 1 y 100")
+            continue
+        else:
+            break
+    
+    while True:
+        print(f'''Ingrese la resistencia del ninja:
+            1. Alta
+            2. Media
+            3. Baja''')
+        resistencia=int(input("Ingrese el número de la opción: "))
+        if resistencia == 1:
+            resistencia = "Alta"
+            break
+        elif resistencia == 2:
+            resistencia = "Media"
+            break
+        elif resistencia == 3:
+            resistencia = "Baja"
+            break
+        else:
+            print("Opción no válida")
+            continue
+    
+    while True:
+        print(f'''Elige el estilo de batalla del Ninja
+            1. Taijutsu (cuerpo a cuerpo)
+            2. Kenjutsu (katana)
+            3. Sojutsu (lanzas)
+            4. Ninjutsu (magia)''')
+        estilo=int(input("Ingrese el número de la opción: "))
+        if estilo == 1:
+            estilo = "Taijutsu (cuerpo a cuerpo)"
+            break
+        elif estilo == 2:
+            estilo = "Kenjutsu (katana)"
+            break
+        elif estilo == 3:
+            estilo = "Sojutsu (lanzas)"
+            break
+        elif estilo == 4:
+            estilo = "Ninjutsu (magia)"
+            break
+        else:
+            print("Opción no válida")
+            continue
+    
+    habilidades=None
+    puntos=0
+    ninjaNuevo={"nombre": nombreNinja,"fuerza":fuerza,"agilidad":agilidad,"resistencia":resistencia,"estilo":estilo,"habilidades":habilidades,"puntos":puntos}
+    ninjas.append(ninjaNuevo)
+    print(f'''El ninja {nombreNinja} ha sido creado con éxito''')
+    with open(archivoNinjas, "w") as archivo:
+        for ninja in ninjas:
+            formato={ninja["nombre"]:ninja}
+            archivo.write(str(formato))
+
+def verNinjas(archivoNinjas):
+    if not os.path.exists(archivoNinjas):
+        print("No hay ninjas creados")
+        return
+
+    print(f'''Elija la foma de lsitar los ninjas:
+          1. Orden de inscripción
+          2. Puntos
+          3. Nombre''')
+    forma=int(input("Ingrese el número de la opción: "))
+    if forma == 1:
+        with open(archivoNinjas, "r") as archivo:
+            ninjas = eval(archivo.read())
+            for i, ninja in enumerate(ninjas.values()):
+                print(f'''--------------------Ninja {i+1}--------------------:
+                    Nombre: {ninja["nombre"]}
+                    Fuerza: {ninja["fuerza"]}
+                    Agilidad: {ninja["agilidad"]}
+                    Resistencia: {ninja["resistencia"]}
+                    Estilo: {ninja["estilo"]}
+                    Habilidades: {ninja["habilidades"]}
+                    Puntos: {ninja["puntos"]}''')
+                print("--------------------------------------------------------\n")
+    elif forma == 2:
+        with open(archivoNinjas, "r") as archivo:
+            ninjas = eval(archivo.read())
+            lista_ninjas = list(ninjas.values())
+            n = len(lista_ninjas)
+            for i in range(n):
+                for j in range(0, n - i - 1):
+                    if lista_ninjas[j]["puntos"] < lista_ninjas[j + 1]["puntos"]:
+                        lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
+
+            print("Puntos de los ninjas ordenados de mayor a menor:")
+            for ninja in lista_ninjas:
+                print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
+            Nombre: {ninja["nombre"]}
+            Fuerza: {ninja["fuerza"]}
+            Agilidad: {ninja["agilidad"]}
+            Resistencia: {ninja["resistencia"]}
+            Estilo: {ninja["estilo"]}
+            Habilidades: {ninja["habilidades"]}
+            --------------------------------------------------------------------------------\n''')
+    elif forma == 3:
+        with open("archivoNinjas.txt", "r") as archivo:
+            ninjas = eval(archivo.read())
+            lista_ninjas = list(ninjas.values())
+            n = len(lista_ninjas)
+            for i in range(n):
+                for j in range(0, n - i - 1):
+                    if lista_ninjas[j]["nombre"].lower() > lista_ninjas[j + 1]["nombre"].lower():
+                        lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
+
+            print("Ninjas ordenados por nombre (alfabéticamente):")
+            for ninja in lista_ninjas:
+                print(f'''-------------------- Ninja: {ninja["nombre"]} --------------------:
+            Puntos: {ninja["puntos"]}
+            Fuerza: {ninja["fuerza"]}
+            Agilidad: {ninja["agilidad"]}
+            Resistencia: {ninja["resistencia"]}
+            Estilo: {ninja["estilo"]}
+            Habilidades: {ninja["habilidades"]}
+            --------------------------------------------------------------------------------\n''')
+
+
+            
+
+
+
+
+def menuAdministrador(usuario,contraseña):
+    if usuario=="admin" and contraseña=="admin":
+        while True:
+            print("Bienvenido al menú de administrador")
+            print("1. Agregar Ninjas")
+            print("2. Ver Ninjas")
+            print("3. Buscar Ninjas")
+            print("4. Actualizar Ninja")
+            print("5. Eliminar Ninja")
+            print("6. Crear arbol de habilidades")
+            print("7. Guardar cambios en el archivo original")
+            print("8. Salir")
+            opcion = input("Ingrese la opción que desee: ")
+            match opcion:
+                case "1":
+                    agregarNinjas(archivoNinjas)
+                case "2":
+                    verNinjas(archivoNinjas)
+                case "3":
+                    buscarNinjas()
+                case "4":
+                    actualizarNinja()
+                case "5":
+                    eliminarNinja()
+                case "6":
+                    crearArbolHabilidades()
+                case "7":
+                    guardarCambios()
+                case "8":
+                    print("Hasta luego")
+                    return
+                case _:
+                    print("Opción no válida")
+                    continue
+    else:
+        print("Contraseña o usuario incorrectos. Acceso denegado")
+        return
+
+
+
+
 def iniciarSesion(archivoUsuarios):
     if not os.path.exists(archivoUsuarios):
         print("No hay usuarios registrados")
@@ -83,14 +301,14 @@ def iniciarSesion(archivoUsuarios):
             contraseña=input("Ingrese su contraseña: ")
             for linea in archivo:
                 User=eval(linea.strip())
-                if User["usuario"]==usuario and User["contraseña"]==contraseña:
-                    print(f'''Bienvenido {User["nombre"]}''')
-                    return #MENU
-                else:
-                    print("Usuario o contraseña incorrectos")
-                    continue
+            if User["usuario"]==usuario and User["contraseña"]==contraseña:
+                print(f'''Bienvenido {User["nombre"]}''')
+                return #MENU
+            else:
+                print("Usuario o contraseña incorrectos")
+                continue
 
-def menuPrincipal():
+def menuJugador():
     while True:
         print(f'''--------MENÚ INICIO DE SESIÓN NINJAS--------
             1. INICIAR SESIÓN
@@ -108,6 +326,26 @@ def menuPrincipal():
             case _:
                 print("Opción no válida")
                 continue
+
+def menuPrincipal():
+    while True:
+        print(f'''--------MENÚ PRINCIPAL--------
+              1. Administrador
+              2. Jugador''')
+        opcion = input("Ingrese una opción: ")
+        match opcion:
+            case "1":
+                usuario=input("Ingrese su usuario: ")
+                contraseña=input("Ingrese su contraseña: ")
+                menuAdministrador(usuario,contraseña)
+            case "2":
+                menuJugador()
+            case "3":
+                print("Adiós")
+                return
+            case _:
+                print("Opción no válida")
+
 
 menuPrincipal()
 
