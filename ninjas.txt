@@ -1,1 +1,0 @@
-{'SALVADOR': {'nombre': 'SALVADOR', 'fuerza': '100', 'agilidad': '100', 'resistencia': 'Alta', 'estilo': 'Ninjutsu (magia)', 'habilidades': None, 'puntos': 0}}
