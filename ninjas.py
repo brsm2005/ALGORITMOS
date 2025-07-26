@@ -1,31 +1,17 @@
 #Bryan Salvador
 import os
+import random
 archivoUsuarios="usuarios.txt"
 archivoNinjas="ninjas.txt"
 usuarios=[]
-habilidadesNinjas={"valor":"Dominio armas",
-                    "izquierda":{"valor":"Cuchillas",
-                                "izquierda":{"valor":"Dagas",
-                                                "izquierda":None,
-                                                "derecha":None},
-                                "derecha":{"valor":"Estrellas Ninjas",
-                                            "izquierda":None,
-                                            "derecha":None} 
-                                },
-                    "derecha":{"valor":"Destrezas",
-                                "izquierda":{"valor":"Patadas",
-                                            "izquierda":None,
-                                            "derecha":None},
-                                "derecha":{"valor":"Artes Marciales",
-                                            "izquierda":{"valor":"Kun-fu",
-                                                        "izquierda":None,
-                                                        "derecha":None},
-                                            "derecha":{"valor":"Karate",
-                                                    "izquierda":None,
-                                                    "derecha":None}
-                                            }
-                                }
-                    }
+habilidadesNinjas={"Habilidades Ofensivas":{"Kenjutsu (corto alcance)":("Estocada","Lluvia de cortes","Navajas", "Puños de hierro","Katana","Porras","Nunchaku"),
+                                            "Sojutsu (Arma Lanzable)":("Bumeran","Estrellas", "Kunai","Dagas","Segador de almas"),
+                                            "Taijutsu (cuerpo a cuerpo)":("Suplex","Lluvia de patadas","Llaves","Patada tornado","Codazo","Barrido doble", "Gancho"),
+                                            "Ninjutsu (Habilidades magicas)":("Esfera de fuego", "Esfera de energía", "Estallido obscuro", "Fragmento de hielo eterno", "Hechizo adbsorción de almas", "Destello negro")},
+                    "Habilidades Defensivas":{"Kumai (Escudo)":("Escudo de protección", "Campo de energía", "Angel guardian"),
+                                              "Hichy (camuflaje)":("Invisibilidad", "Cortina de humo", "Cortina de almas en pena","Muro de hielo","Pared de fuego"),
+                                              "Blink (bloqueo)":("Bloqueo", "Espejismo defensivo","Alucinación", "Campo de fuerza","Despliegue de energía")},
+                   }
 
 def cargarusuarios(archivousuarios):
     if not os.path.exists(archivousuarios):
@@ -116,7 +102,177 @@ def cargarNinjas(archivoNinjas):
             for ninja in ninja_dict.values():
                 ninjas.append(ninja)
     return ninjas
+
+def habilidadesOfensivas(habilidadesNinjas,puntos):
+    puntos=puntos
+    habilidadNinja = []
+    habilidades = habilidadesNinjas["Habilidades Ofensivas"]
+    contador=1
+    claves = list(habilidades.keys())
+    print("\n--------------------------------------------------------\n")
+    print("PUEDES ELEGIR 2 TIPOS DE HABILIDADES OFENSIVAS")
+    while contador<=2:
+        print("HABILIDAD OFENSIVA ",contador," DE ",2)
+        while True:
+            print("\nTipos de habilidades ofensivas:")
+            for i, clave in enumerate(claves, start=1):
+                print(f"{i}. {clave}")
+            
+            opcion = input("Ingrese una opción para el tipo de habilidad ofensiva: ")
+            
+            if opcion.isdigit():
+                indice = int(opcion) - 1
+                if indice==0:
+                    puntos+=2.00
+                elif indice==1:
+                    puntos+=1.25
+                elif indice==2:
+                    puntos+=2.50
+                elif indice==3:
+                    puntos+=1.00
+
+                if 0 <= indice < len(claves):
+                    habilidadElegida = claves[indice]
+                    break
+            
+            print("Opción no válida. Inténtelo de nuevo.")
+        
+        opciones = habilidades[habilidadElegida]
+        
+        randomHabilidad=random.sample(opciones, 2)
+        habilidadNinja.extend(randomHabilidad)
+
+        print(f"\nHas elegido el tipo de habilidad ofensiva: {habilidadElegida}")
+        print("Tus habilidades son:")
+        for h in randomHabilidad:
+            print(f"- {h}")
+        contador+=1
+        print("\n--------------------------------------------------------\n")
+    return habilidadNinja, puntos
+
+def habilidadesDefensivas(habilidadesNinjas,puntos):
+    habilidadNinja = []
+    habilidades = habilidadesNinjas["Habilidades Defensivas"]
+    contador=1
+    claves = list(habilidades.keys())
+    print("\n--------------------------------------------------------\n")
+    print("PUEDES ELEGIR 2 TIPOS DE HABILIDADES DEFENSIVAS")
+    while contador<=2:
+        print("HABILIDAD DEFENSIVA ",contador," DE ",2)
+        while True:
+            print("\nTipos de habilidades defensivas:")
+            for i, clave in enumerate(claves, start=1):
+                print(f"{i}. {clave}")
+            
+            opcion = input("Ingrese una opción para el tipo de habilidad ofensiva: ")
+            
+            if opcion.isdigit():
+                indice = int(opcion) - 1
+                if indice==0:
+                    puntos+=2.00
+                elif indice==1:
+                    puntos+=1.25
+                elif indice==2:
+                    puntos+=2.50
+                if 0 <= indice < len(claves):
+                    habilidadElegida = claves[indice]
+                    break
+            
+            print("Opción no válida. Inténtelo de nuevo.")
+        
+        opciones = habilidades[habilidadElegida]
+        randomHabilidad=random.sample(opciones, 2)
+        habilidadNinja.extend(randomHabilidad)
+
+        print(f"\nHas elegido el tipo de habilidad defensiva: {habilidadElegida}")
+        print("Tus habilidades son:")
+        for h in randomHabilidad:
+            print(f"- {h}")
+        print("\n--------------------------------------------------------\n") 
+        contador+=1
     
+    return habilidadNinja, puntos
+
+def habilidadesMixtas(habilidadesNinjas,puntos):
+    habilidadNinja = []
+    habilidadesDefensivas = habilidadesNinjas["Habilidades Defensivas"]
+    habilidadesOfensivas = habilidadesNinjas["Habilidades Ofensivas"]
+    contador=1
+    clavesDefensivas = list(habilidadesDefensivas.keys())
+    clavesOfensivas = list(habilidadesOfensivas.keys())
+    #--------------------DEFENSIVO
+    print("\n--------------------------------------------------------\n")
+    print("PUEDES ELEGIR 1 TIPO DE HABILIDAD DEFENSIVA")
+    print("HABILIDAD DEFENSIVA ",contador," DE ",1)
+    while True:
+        print("\nTipos de habilidades defensivas:")
+        for i, clave in enumerate(clavesDefensivas, start=1):
+            print(f"{i}. {clave}")
+        
+        opcion = input("Ingrese una opción para el tipo de habilidad defensiva: ")
+        
+        if opcion.isdigit():
+            indice = int(opcion) - 1
+            if indice==0:
+                puntos+=2.00
+            elif indice==1:
+                puntos+=1.5
+            elif indice==2:
+                puntos+=2.5
+            if 0 <= indice < len(clavesDefensivas):
+                habilidadElegidaDefensiva = clavesDefensivas[indice]
+                break
+        
+        print("Opción no válida. Inténtelo de nuevo.")
+    
+    opcionesDefensivas = habilidadesDefensivas[habilidadElegidaDefensiva]
+    randomHabilidadDefensiva=random.sample(opcionesDefensivas, 2)
+    habilidadNinja.extend(randomHabilidadDefensiva)
+    #-----------OFENSIVO
+    print("\n--------------------------------------------------------\n")
+    print("PUEDES ELEGIR 1 TIPO DE HABILIDAD OFENSIVA")
+    print("HABILIDAD OFENSIVA ",contador," DE ",1)
+    while True:
+        print("\nTipos de habilidades ofensivas:")
+        for i, clave in enumerate(clavesOfensivas, start=1):
+            print(f"{i}. {clave}")
+        
+        opcion = input("Ingrese una opción para el tipo de habilidad ofensiva: ")
+        
+        if opcion.isdigit():
+            indice = int(opcion) - 1
+            if indice==0:
+                puntos+=2.00
+            elif indice==1:
+                puntos+=1.50
+            elif indice==2:
+                puntos+=2.50
+            elif indice==3:
+                puntos+=1.00
+            if 0 <= indice < len(clavesOfensivas):
+                habilidadElegidaOfensiva = clavesOfensivas[indice]
+                break
+        
+        print("Opción no válida. Inténtelo de nuevo.")
+    
+    opcionesOfensivas = habilidadesOfensivas[habilidadElegidaOfensiva]
+    randomHabilidadOfensiva=random.sample(opcionesOfensivas, 2)
+    habilidadNinja.extend(randomHabilidadOfensiva)
+
+    print("\n---------------------HABILIDADES--------------------------\n")
+
+    print(f"\nHas elegido el tipo de habilidad defensiva: {habilidadElegidaDefensiva}")
+    print("Tus habilidades defensivas son:")
+    for h in randomHabilidadDefensiva:
+        print(f"- {h}")
+
+    print(f"\nHas elegido el tipo de habilidad ofensiva: {habilidadElegidaOfensiva}")
+    print("Tus habilidades ofensivas son:")
+    for h in randomHabilidadOfensiva:
+        print(f"- {h}")
+    print("\n--------------------------------------------------------\n")
+    return habilidadNinja, puntos
+
 def agregarNinjas(archivoNinjas):
     ninjas=cargarNinjas(archivoNinjas)
     nombreNinja = input("Ingrese el nombre del ninja: ").strip()
@@ -130,28 +286,42 @@ def agregarNinjas(archivoNinjas):
             return
     
     while True:
-        fuerza=input("Ingrese la fuerza de ataque del ninja (1-100): ")
+        puntos=0
+        fuerza=0
+        fuerza=input("Ingrese la fuerza del ninja (1-100): ")
         agilidad=input("Ingrese la velocidad de ataque del ninja (1-100): ")
-        if (not fuerza.isdigit() or not 1 <=int(fuerza)<= 100) or (not agilidad.isdigit() or not 1 <=int(agilidad)<= 100):
-            print("La fuerza y la agilidad del ninja debe ser un número entre 1 y 100")
+        if (not agilidad.isdigit() or not 1 <=int(agilidad)<= 100) or (not fuerza.isdigit() or not 1 <=int(fuerza)<= 100):
+            print("La agilidad y fuerza del ninja debe ser un número entre 1 y 100")
             continue
         else:
-            break
+            if int(agilidad)>50:
+                puntos+=4
+            else:
+                puntos+=2
+            
+            if int(fuerza)>50:
+                puntos+=4
+            else:
+                puntos+=2
+        break
     
     while True:
         print(f'''Ingrese la resistencia del ninja:
-            1. Alta
-            2. Media
-            3. Baja''')
+            1. Alta (+5 puntos)
+            2. Media (+4 puntos)
+            3. Baja (+3 puntos)''')
         resistencia=int(input("Ingrese el número de la opción: "))
         if resistencia == 1:
             resistencia = "Alta"
+            puntos+=5
             break
         elif resistencia == 2:
             resistencia = "Media"
+            puntos+=4
             break
         elif resistencia == 3:
             resistencia = "Baja"
+            puntos+=3
             break
         else:
             print("Opción no válida")
@@ -159,30 +329,29 @@ def agregarNinjas(archivoNinjas):
     
     while True:
         print(f'''Elige el estilo de batalla del Ninja
-            1. Taijutsu (cuerpo a cuerpo)
-            2. Kenjutsu (katana)
-            3. Sojutsu (lanzas)
-            4. Ninjutsu (magia)''')
+            1. Ofensivo (50% probabilidad de ganar)
+            2. Defensivo (40% probabilidad de ganar)
+            3. Mixto (75% probabilidad de ganar)''')
         estilo=int(input("Ingrese el número de la opción: "))
         if estilo == 1:
-            estilo = "Taijutsu (cuerpo a cuerpo)"
+            estilo = "Ofensivo"
+            puntos+=1.5
+            habilidades, puntos=habilidadesOfensivas(habilidadesNinjas,puntos)
             break
         elif estilo == 2:
-            estilo = "Kenjutsu (katana)"
+            estilo = "Defensivo"
+            puntos+=2
+            habilidades, puntos=habilidadesDefensivas(habilidadesNinjas,puntos)
             break
         elif estilo == 3:
-            estilo = "Sojutsu (lanzas)"
-            break
-        elif estilo == 4:
-            estilo = "Ninjutsu (magia)"
+            estilo = "Mixto"
+            puntos+=1
+            habilidades, puntos=habilidadesMixtas(habilidadesNinjas,puntos)
             break
         else:
             print("Opción no válida")
             continue
-    
-    habilidades=None
-    puntos=0
-    ninjaNuevo={"nombre": nombreNinja.upper(),"fuerza":fuerza,"agilidad":agilidad,"resistencia":resistencia,"estilo":estilo,"habilidades":habilidades,"puntos":puntos}
+    ninjaNuevo={"nombre": nombreNinja.upper(),"fuerza":fuerza,"agilidad":agilidad,"resistencia":resistencia,"estilo":estilo,"habilidades":habilidades,"puntos":puntos,"vida":100,"victorias":0,"derrotas":0,"posicion":"8vos de final"}
     ninjas.append(ninjaNuevo)
     print(f'''El ninja {nombreNinja} ha sido creado con éxito''')
     with open(archivoNinjas, "w") as archivo:
@@ -209,7 +378,10 @@ def verNinjas(archivoNinjas):
                 Resistencia: {ninja["resistencia"]}
                 Estilo: {ninja["estilo"]}
                 Habilidades: {ninja["habilidades"]}
-                Puntos: {ninja["puntos"]}''')
+                Puntos: {ninja["puntos"]}
+                Victorias: {ninja["victorias"]}
+                Derrotas: {ninja["derrotas"]}
+                Posicion: {ninja["posicion"]}''')
             print("--------------------------------------------------------\n")
     elif forma == 2:
         lista_ninjas = ninjas.copy()
@@ -266,6 +438,9 @@ def buscarNinja(archivoNinjas):
                     Resistencia: {ninja["resistencia"]}
                     Estilo: {ninja["estilo"]}
                     Habilidades: {ninja["habilidades"]}
+                    Victorias: {ninja["victorias"]}
+                    Derrotas: {ninja["derrotas"]}
+                    Posición: {ninja["posicion"]}
                     --------------------------------------------------------------------------------\n''')
             encontrado=True
             break
@@ -278,7 +453,6 @@ def actualizarNinja(archivoNinjas):
     if len(ninjas) == 0:
         print("No hay ninjas registrados.")
         return
-
     nombre = input("Ingrese el nombre del ninja que desea actualizar: ").strip()
     encontrado = False
 
@@ -286,58 +460,81 @@ def actualizarNinja(archivoNinjas):
         if ninja["nombre"].lower() == nombre.lower():
             print(f"----------- Ninja encontrado: {ninja['nombre']} -----------")
             encontrado = True
+            if ninja["puntos"]>0:
+                print("El ninja tiene puntos, no puede ser actualizado")
+                return
 
             nombreNinja = input("Ingrese el nuevo nombre del ninja: ").strip()
+            if not nombreNinja.isalpha():
+                print("Solo se permiten letras en el nombre del ninja.")
+                return
 
             while True:
-                fuerza = input("Ingrese la fuerza de ataque del ninja (1-100): ")
-                agilidad = input("Ingrese la velocidad de ataque del ninja (1-100): ")
-                if (not fuerza.isdigit() or not 1 <= int(fuerza) <= 100) or \
-                   (not agilidad.isdigit() or not 1 <= int(agilidad) <= 100):
-                    print("La fuerza y la agilidad del ninja deben ser números entre 1 y 100.")
+                fuerza=0
+                puntos=0
+                fuerza=input("Ingrese la nueva fuerza del ninja (1-100): ")
+                agilidad=input("Ingrese la velocidad de ataque del ninja (1-100): ")
+                if (not agilidad.isdigit() or not 1 <=int(agilidad)<= 100) or (not fuerza.isdigit() or not 1 <=int(fuerza)<= 100):
+                    print("La agilidad y fuerza del ninja debe ser un número entre 1 y 100")
                     continue
                 else:
-                    break
-
+                    if int(agilidad)>50:
+                        puntos+=4
+                    else:
+                        puntos+=2
+                    
+                    if int(fuerza)>50:
+                        puntos+=4
+                    else:
+                        puntos+=2
+                break
+            
             while True:
-                print('''Ingrese la resistencia del ninja:
-1. Alta
-2. Media
-3. Baja''')
-                opcion = input("Ingrese el número de la opción: ")
-                if opcion == "1":
+                print(f'''Ingrese la resistencia del ninja:
+                    1. Alta (+5 puntos)
+                    2. Media (+4 puntos)
+                    3. Baja (+3 puntos)''')
+                resistencia=int(input("Ingrese el número de la opción: "))
+                if resistencia == 1:
                     resistencia = "Alta"
+                    puntos+=5
                     break
-                elif opcion == "2":
+                elif resistencia == 2:
                     resistencia = "Media"
+                    puntos+=4
                     break
-                elif opcion == "3":
+                elif resistencia == 3:
                     resistencia = "Baja"
+                    puntos+=3
                     break
                 else:
                     print("Opción no válida")
-
+                    continue
+            
             while True:
-                print('''Elige el estilo de batalla del Ninja:
-1. Taijutsu (cuerpo a cuerpo)
-2. Kenjutsu (katana)
-3. Sojutsu (lanzas)
-4. Ninjutsu (magia)''')
-                opcion = input("Ingrese el número de la opción: ")
-                estilos = {
-                    "1": "Taijutsu (cuerpo a cuerpo)",
-                    "2": "Kenjutsu (katana)",
-                    "3": "Sojutsu (lanzas)",
-                    "4": "Ninjutsu (magia)"
-                }
-                if opcion in estilos:
-                    estilo = estilos[opcion]
+                print(f'''Elige el estilo de batalla del Ninja
+                    1. Ofensivo (50% probabilidad de ganar)
+                    2. Defensivo (40% probabilidad de ganar)
+                    3. Mixto (75% probabilidad de ganar)''')
+                estilo=int(input("Ingrese el número de la opción: "))
+                if estilo == 1:
+                    estilo = "Ofensivo"
+                    puntos+=1.5
+                    habilidades, puntos=habilidadesOfensivas(habilidadesNinjas,puntos)
+                    break
+                elif estilo == 2:
+                    estilo = "Defensivo"
+                    puntos+=2
+                    habilidades,puntos=habilidadesDefensivas(habilidadesNinjas,puntos)
+                    break
+                elif estilo == 3:
+                    estilo = "Mixto"
+                    puntos+=1
+                    habilidades,puntos=habilidadesMixtas(habilidadesNinjas,puntos)
                     break
                 else:
                     print("Opción no válida")
-
-            habilidades = None
-            puntos = 0
+                    continue 
 
             ninjaNuevo = {
                 "nombre": nombreNinja.upper(),
@@ -346,7 +543,10 @@ def actualizarNinja(archivoNinjas):
                 "resistencia": resistencia,
                 "estilo": estilo,
                 "habilidades": habilidades,
-                "puntos": puntos
+                "puntos": puntos,
+                "vida":100,
+                "victorias":0,
+                "derrotas":0
             }
 
             ninjas[i] = ninjaNuevo
@@ -387,8 +587,7 @@ def menuAdministrador(usuario,contraseña):
             print("3. Buscar Ninjas")
             print("4. Actualizar Ninja")
             print("5. Eliminar Ninja")
-            print("6. Crear arbol de habilidades")
-            print("7. Salir")
+            print("6. Salir")
             opcion = input("Ingrese la opción que desee: ")
             match opcion:
                 case "1":
@@ -402,8 +601,6 @@ def menuAdministrador(usuario,contraseña):
                 case "5":
                     eliminarNinja(archivoNinjas)
                 case "6":
-                    crearArbolHabilidades()
-                case "7":
                     print("Hasta luego")
                     return
                 case _:
@@ -412,9 +609,6 @@ def menuAdministrador(usuario,contraseña):
     else:
         print("Contraseña o usuario incorrectos. Acceso denegado")
         return
-
-
-
 
 def iniciarSesion(archivoUsuarios):
     if not os.path.exists(archivoUsuarios):
@@ -474,9 +668,6 @@ def menuPrincipal():
             case _:
                 print("Opción no válida")
 
-
 menuPrincipal()
 
-                        
-            
-
+#PUNTAJES: VICTORIAS +11, DERROTAS -5.5, A.MIXTO 1, A.OFENSIVO 1.5, A.DEFENSIVO 2
