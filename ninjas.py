@@ -273,6 +273,48 @@ def habilidadesMixtas(habilidadesNinjas,puntos):
     print("\n--------------------------------------------------------\n")
     return habilidadNinja, puntos
 
+def Preorder(arbol):
+    if arbol is not None and not isinstance(arbol, (int, float)):
+        listaHabilidades = []
+        listaHabilidades.append(arbol["valor"])
+        listaHabilidades += Preorder(arbol["izquierda"])
+        listaHabilidades += Preorder(arbol["derecha"])
+        
+        listaFiltrada = [x for x in listaHabilidades if isinstance(x, str) and not x.isupper()]
+        return listaFiltrada
+    else:
+        return []
+
+def Inorder(arbol):
+    if arbol is not None and not isinstance(arbol, (int, float)):
+        listaHabilidades = []
+        listaHabilidades += Preorder(arbol["izquierda"])
+        listaHabilidades.append(arbol["valor"])
+        listaHabilidades += Preorder(arbol["derecha"])
+        
+        listaFiltrada = [
+            x for x in listaHabilidades
+            if isinstance(x, str) and not x.isupper() and not x.istitle()
+        ]
+        return listaFiltrada
+    else:
+        return []
+
+def Inorder(arbol):
+    if arbol is not None and not isinstance(arbol, (int, float)):
+        listaHabilidades = []
+        listaHabilidades += Preorder(arbol["izquierda"])
+        listaHabilidades += Preorder(arbol["derecha"])
+        listaHabilidades.append(arbol["valor"])
+        
+        listaFiltrada = [
+            x for x in listaHabilidades
+            if isinstance(x, str) and not x.isupper() and not x.istitle()
+        ]
+        return listaFiltrada
+    else:
+        return []
+    
 def agregarNinjas(archivoNinjas):
     ninjas=cargarNinjas(archivoNinjas)
     nombreNinja = input("Ingrese el nombre del ninja: ").strip()
@@ -351,7 +393,34 @@ def agregarNinjas(archivoNinjas):
         else:
             print("Opción no válida")
             continue
-    ninjaNuevo={"nombre": nombreNinja.upper(),"fuerza":fuerza,"agilidad":agilidad,"resistencia":resistencia,"estilo":estilo,"habilidades":habilidades,"puntos":puntos,"vida":100,"victorias":0,"derrotas":0,"posicion":"8vos de final"}
+    h1= habilidades[0]
+    h2= habilidades[1]
+    h3= habilidades[2]
+    h4= habilidades[3]
+    arbolHabilidades={"valor":nombreNinja.upper(),
+                      "izquierda":{"valor":1,
+                                   "izquierda":{
+                                       "valor":h1,
+                                       "izquierda":None,
+                                       "derecha":None
+                                   },
+                                   "derecha":{
+                                       "valor":h2,
+                                       "izquierda":None,
+                                       "derecha": None
+                                   }},
+                      "derecha":{"valor": 2,
+                                 "izquierda":{
+                                       "valor":h3,
+                                       "izquierda":None,
+                                       "derecha":None
+                                   },
+                                   "derecha":{
+                                       "valor":h4,
+                                       "izquierda":None,
+                                       "derecha": None
+                                   }}}
+    ninjaNuevo={"nombre": nombreNinja.upper(),"fuerza":fuerza,"agilidad":agilidad,"resistencia":resistencia,"estilo":estilo,"habilidades":arbolHabilidades,"puntos":puntos,"vida":100,"victorias":0,"derrotas":0,"posicion":"8vos de final"}
     ninjas.append(ninjaNuevo)
     print(f'''El ninja {nombreNinja} ha sido creado con éxito''')
     with open(archivoNinjas, "w") as archivo:
@@ -371,13 +440,15 @@ def verNinjas(archivoNinjas):
     forma=int(input("Ingrese el número de la opción: "))
     if forma == 1:
         for i, ninja in enumerate(ninjas):
+            arbol= ninja["habilidades"]
+            listaHabilidades=Preorder(arbol)
             print(f'''--------------------Ninja {i+1}--------------------:
                 Nombre: {ninja["nombre"]}
                 Fuerza: {ninja["fuerza"]}
                 Agilidad: {ninja["agilidad"]}
                 Resistencia: {ninja["resistencia"]}
                 Estilo: {ninja["estilo"]}
-                Habilidades: {ninja["habilidades"]}
+                Habilidades: {listaHabilidades}
                 Puntos: {ninja["puntos"]}
                 Victorias: {ninja["victorias"]}
                 Derrotas: {ninja["derrotas"]}
@@ -392,13 +463,18 @@ def verNinjas(archivoNinjas):
                     lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
             print("Puntos de los ninjas ordenados de mayor a menor:")
             for ninja in lista_ninjas:
+                arbol= ninja["habilidades"]
+                listaHabilidades=Preorder(arbol)
                 print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
             Nombre: {ninja["nombre"]}
             Fuerza: {ninja["fuerza"]}
             Agilidad: {ninja["agilidad"]}
             Resistencia: {ninja["resistencia"]}
             Estilo: {ninja["estilo"]}
-            Habilidades: {ninja["habilidades"]}
+            Habilidades: {listaHabilidades}
+            Victorias: {ninja["victorias"]}
+            Derrotas: {ninja["derrotas"]}
+            Posicion: {ninja["posicion"]}
             --------------------------------------------------------------------------------\n''')
     elif forma == 3:
         lista_ninjas = ninjas.copy()
@@ -410,13 +486,18 @@ def verNinjas(archivoNinjas):
 
             print("Ninjas ordenados por nombre (alfabéticamente):")
             for ninja in lista_ninjas:
+                arbol= ninja["habilidades"]
+                listaHabilidades=Preorder(arbol)
                 print(f'''-------------------- Ninja: {ninja["nombre"]} --------------------:
             Puntos: {ninja["puntos"]}
             Fuerza: {ninja["fuerza"]}
             Agilidad: {ninja["agilidad"]}
             Resistencia: {ninja["resistencia"]}
             Estilo: {ninja["estilo"]}
-            Habilidades: {ninja["habilidades"]}
+            Habilidades: {listaHabilidades}
+            Victorias: {ninja["victorias"]}
+            Derrotas: {ninja["derrotas"]}
+            Posicion: {ninja["posicion"]}
             --------------------------------------------------------------------------------\n''')
     else:
         print("Opción no válida.")
@@ -431,13 +512,15 @@ def buscarNinja(archivoNinjas):
     encontrado=False
     for ninja in ninjas:
         if ninja["nombre"].lower() == nombre.lower():
+            arbol= ninja["habilidades"]
+            listaHabilidades=Preorder(arbol)
             print(f'''-------------------- Ninja: {ninja["nombre"]} --------------------:
                     Puntos: {ninja["puntos"]}
                     Fuerza: {ninja["fuerza"]}
                     Agilidad: {ninja["agilidad"]}
                     Resistencia: {ninja["resistencia"]}
                     Estilo: {ninja["estilo"]}
-                    Habilidades: {ninja["habilidades"]}
+                    Habilidades: {listaHabilidades}
                     Victorias: {ninja["victorias"]}
                     Derrotas: {ninja["derrotas"]}
                     Posición: {ninja["posicion"]}
@@ -460,8 +543,8 @@ def actualizarNinja(archivoNinjas):
         if ninja["nombre"].lower() == nombre.lower():
             print(f"----------- Ninja encontrado: {ninja['nombre']} -----------")
             encontrado = True
-            if ninja["puntos"]>0:
-                print("El ninja tiene puntos, no puede ser actualizado")
+            if ninja["victorias"]>0 or ninja["derrotas"] > 0:
+                print("El ninja tiene partidas jugadas, no puede ser actualizado. Esto podría afectar la clasificación del ninja.")
                 return
 
             nombreNinja = input("Ingrese el nuevo nombre del ninja: ").strip()
@@ -669,5 +752,3 @@ def menuPrincipal():
                 print("Opción no válida")
 
 menuPrincipal()
-
-#PUNTAJES: VICTORIAS +11, DERROTAS -5.5, A.MIXTO 1, A.OFENSIVO 1.5, A.DEFENSIVO 2
