@@ -103,17 +103,18 @@ def registrarse(archivoUsuarios):
 def cargarNinjas(archivoNinjas):
     if not os.path.exists(archivoNinjas):
         pass
-    with open(archivoNinjas, "r") as archivo:
-        for linea in archivo:
-            try:
-                ninja_dict = eval(linea.strip())
-                for ninja in ninja_dict.values():
-                    if isinstance(ninja, dict):
-                        ninjas.append(ninja)
-                    else:
-                        print("⚠️ Línea ignorada (no es un diccionario):", linea.strip())
-            except:
-                print("⚠️ Error al evaluar línea:", linea.strip())
+    else:
+        with open(archivoNinjas, "r") as archivo:
+            for linea in archivo:
+                try:
+                    ninja_dict = eval(linea.strip())
+                    for ninja in ninja_dict.values():
+                        if isinstance(ninja, dict):
+                            ninjas.append(ninja)
+                        else:
+                            print("⚠️ Línea ignorada (no es un diccionario):", linea.strip())
+                except:
+                    print("⚠️ Error al evaluar línea:", linea.strip())
 
 def habilidadesOfensivas(habilidadesNinjas,puntos):
     puntos=puntos
@@ -328,16 +329,17 @@ def Posorder(arbol):
         return []
     
 def agregarNinjas(archivoNinjas):
-    ninjas=cargarNinjas(archivoNinjas)
     nombreNinja = input("Ingrese el nombre del ninja: ").strip()
     if not nombreNinja.isalpha():
         print("Solo se permiten letras en el nombre del ninja.")
         return
-
-    for ninja in ninjas:
-        if ninja["nombre"].lower() == nombreNinja.lower():
-            print("El ninja ya existe")
-            return
+    if len(ninjas)==0:
+        pass
+    else:
+        for ninja in ninjas:
+            if ninja["nombre"].lower() == nombreNinja.lower():
+                print("El ninja ya existe")
+                return
     
     while True:
         puntos=0
@@ -460,11 +462,7 @@ def verNinjas():
                         Fuerza: {ninja["fuerza"]}
                         Agilidad: {ninja["agilidad"]}
                         Resistencia: {ninja["resistencia"]}
-                        Estilo: {ninja["estilo"]}
                         Habilidades: {listaHabilidades}
-                        Puntos: {ninja["puntos"]}
-                        Victorias: {ninja["victorias"]}
-                        Derrotas: {ninja["derrotas"]}
                         Posicion: {ninja["posicion"]}''')
                     print("--------------------------------------------------------\n")
             elif forma == "2":
@@ -483,10 +481,7 @@ def verNinjas():
                     Fuerza: {ninja["fuerza"]}
                     Agilidad: {ninja["agilidad"]}
                     Resistencia: {ninja["resistencia"]}
-                    Estilo: {ninja["estilo"]}
                     Habilidades: {listaHabilidades}
-                    Victorias: {ninja["victorias"]}
-                    Derrotas: {ninja["derrotas"]}
                     Posicion: {ninja["posicion"]}
                     --------------------------------------------------------------------------------\n''')
             elif forma == "3":
@@ -506,10 +501,7 @@ def verNinjas():
                     Fuerza: {ninja["fuerza"]}
                     Agilidad: {ninja["agilidad"]}
                     Resistencia: {ninja["resistencia"]}
-                    Estilo: {ninja["estilo"]}
                     Habilidades: {listaHabilidades}
-                    Victorias: {ninja["victorias"]}
-                    Derrotas: {ninja["derrotas"]}
                     Posicion: {ninja["posicion"]}
                     --------------------------------------------------------------------------------\n''')
             else:
@@ -547,7 +539,6 @@ def buscarNinja():
         return
             
 def actualizarNinja(archivoNinjas):
-    ninjas = cargarNinjas(archivoNinjas)
     if len(ninjas) == 0:
         print("No hay ninjas registrados.")
         return
@@ -633,18 +624,45 @@ def actualizarNinja(archivoNinjas):
                 else:
                     print("Opción no válida")
                     continue 
-
+            h1= habilidades[0]
+            h2= habilidades[1]
+            h3= habilidades[2]
+            h4= habilidades[3]
+            arbolHabilidades={"valor":nombreNinja.upper(),
+                            "izquierda":{"valor":1,
+                                        "izquierda":{
+                                            "valor":h1,
+                                            "izquierda":None,
+                                            "derecha":None
+                                        },
+                                        "derecha":{
+                                            "valor":h2,
+                                            "izquierda":None,
+                                            "derecha": None
+                                        }},
+                            "derecha":{"valor": 2,
+                                        "izquierda":{
+                                            "valor":h3,
+                                            "izquierda":None,
+                                            "derecha":None
+                                        },
+                                        "derecha":{
+                                            "valor":h4,
+                                            "izquierda":None,
+                                            "derecha": None
+                                        }}}
             ninjaNuevo = {
                 "nombre": nombreNinja.upper(),
                 "fuerza": fuerza,
                 "agilidad": agilidad,
                 "resistencia": resistencia,
                 "estilo": estilo,
-                "habilidades": habilidades,
+                "habilidades": arbolHabilidades,
                 "puntos": puntos,
                 "vida":100,
                 "victorias":0,
-                "derrotas":0
+                "derrotas":0,
+                "posicion":"8vos de final"
             }
 
             ninjas[i] = ninjaNuevo
@@ -804,6 +822,7 @@ def combate():
                                 elif puntajeAmigo<=1 and puntajeRival>1:
                                     print("Tu rival ha tirado una habilidad ofensiva y tu una defensiva\n")
                                     vidaElegido-=puntajeRival*puntajeAmigo #vida 100/// 100-50*0.5
+                                    vidaRival-=puntajeRival*(puntajeAmigo+0.2)
                                     if vidaElegido<=0:
                                         vidaElegido=0
                                     print("Te has defendido con exito, redujiste al daño del ataque del rival en un ",puntajeAmigo*100,"%\n")
@@ -811,6 +830,7 @@ def combate():
                                 elif puntajeAmigo>1 and puntajeRival<=1:
                                     print("Tu rival ha tirado una habilidad defensiva y tu una ofensiva\n")
                                     vidaRival-=puntajeAmigo*puntajeRival #vida 100/// 100-50*0.5
+                                    vidaElegido-=puntajeAmigo*(puntajeRival+0.2)
                                     if vidaRival<=0:
                                         vidaRival=0
                                     print("Tu rival se ha defendido con exito, se redujo el daño de tu ataque en un ",puntajeRival*100,"%\n")
@@ -819,13 +839,19 @@ def combate():
                                     print("Ambos ninjas han tirado habilidades ofensivas\n")
                                     vidaElegido-=puntajeRival
                                     vidaRival-=puntajeAmigo
+                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                if (vidaElegido<=0 or vidaRival<=0) or (vidaElegido<=0 and vidaRival<=0):
                                     if vidaElegido<=0:
                                         vidaElegido=0
-                                    
-                                    if vidaRival<=0:
+                                    elif vidaRival<=0:
                                         vidaRival=0
-                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                
+                                    else:
+                                        print("Ambos ninjas han muerto")
+                                        vidaElegido=0
+                                        vidaRival=0
+                                if vidaElegido==0 and vidaRival==0:
+                                    print("Ambos ninjas han muerto")
+                                    print("Ninguno obtine punto")
                                 if vidaElegido==0:
                                     rondas+=1
                                     print("Tu rival ha ganado la ronda\n")
@@ -879,6 +905,9 @@ def accionesJugador(nombre):
     archivoJugador = nombre+".txt"
     if not os.path.exists(archivoJugador):
         pass
+    if len(ninjas)==0:
+        print("No hay ninjas registrados pide al administrador que genere ninjas apra jugar")
+        return
     print("\n-------------MENÚ DE JUEGO-----------\n")
     while True:
         print(f'''
@@ -947,7 +976,6 @@ def menuJugador():
 def menuPrincipal():
     cargarusuarios(archivoUsuarios)
     cargarNinjas(archivoNinjas)
-    print(ninjas)
     while True:
         print(f'''--------MENÚ PRINCIPAL--------
               1. Administrador
