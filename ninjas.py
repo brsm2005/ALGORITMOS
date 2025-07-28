@@ -1,9 +1,11 @@
 #Bryan Salvador
 import os
 import random
+import time
 archivoUsuarios="usuarios.txt"
 archivoNinjas="ninjas.txt"
 usuarios=[]
+ninjas=[]
 habilidadesNinjas={"Habilidades Ofensivas":{"Kenjutsu (corto alcance)":("Estocada","Lluvia de cortes","Navajas", "Puños de hierro","Katana","Porras","Nunchaku"),
                                             "Sojutsu (Arma Lanzable)":("Bumeran","Estrellas", "Kunai","Dagas","Segador de almas"),
                                             "Taijutsu (cuerpo a cuerpo)":("Suplex","Lluvia de patadas","Llaves","Patada tornado","Codazo","Barrido doble", "Gancho"),
@@ -15,11 +17,17 @@ habilidadesNinjas={"Habilidades Ofensivas":{"Kenjutsu (corto alcance)":("Estocad
 
 def cargarusuarios(archivousuarios):
     if not os.path.exists(archivousuarios):
-        return 
-    archivo = open(archivousuarios, "r")
-    for linea in archivo:
-        usuario=linea.strip()
-        usuarios.append(usuario)
+        return
+    with open(archivousuarios, "r") as archivo:
+        for linea in archivo:
+            try:
+                usuario = eval(linea.strip())
+                if isinstance(usuario, dict):
+                    usuarios.append(usuario)
+                else:
+                    print("⚠️ Línea ignorada (no es un diccionario):", linea.strip())
+            except:
+                print("⚠️ Error al evaluar línea:", linea.strip())
         
 def registrarse(archivoUsuarios):
     if not os.path.exists(archivoUsuarios):
@@ -76,10 +84,10 @@ def registrarse(archivoUsuarios):
                 return registrarse(archivoUsuarios)
         except:
             print("Ocurrió un error")
-        for i in range(len(usuarios)):
-            if usuarios[i]["usuario"]==usuario.lower() or usuarios[i]["identificacion"]==identificacion:
-                print("El usuario ya existe")
-                return 
+        for u in usuarios:
+            if u["usuario"].lower() == usuario.lower() or u["identificacion"] == identificacion:
+                print("❌ El usuario o la cédula ya están registrados.")
+                return
         edad= int(input("Ingrese su edad: "))
         contraseña=input("Ingrese su contraseña (debe ser de 8 caracteres o más, incluir una mayúscula y un número): ")
         while len(contraseña) < 8 or not any(char.isupper() for char in contraseña) or not any(char.isdigit() for char in contraseña):
@@ -93,15 +101,19 @@ def registrarse(archivoUsuarios):
         print("Registrado con éxito")
 
 def cargarNinjas(archivoNinjas):
-    ninjas=[]
     if not os.path.exists(archivoNinjas):
-        return ninjas
-    with open(archivoNinjas,"r") as archivo:
+        pass
+    with open(archivoNinjas, "r") as archivo:
         for linea in archivo:
-            ninja_dict = eval(linea.strip())
-            for ninja in ninja_dict.values():
-                ninjas.append(ninja)
-    return ninjas
+            try:
+                ninja_dict = eval(linea.strip())
+                for ninja in ninja_dict.values():
+                    if isinstance(ninja, dict):
+                        ninjas.append(ninja)
+                    else:
+                        print("⚠️ Línea ignorada (no es un diccionario):", linea.strip())
+            except:
+                print("⚠️ Error al evaluar línea:", linea.strip())
 
 def habilidadesOfensivas(habilidadesNinjas,puntos):
     puntos=puntos
@@ -294,13 +306,13 @@ def Inorder(arbol):
         
         listaFiltrada = [
             x for x in listaHabilidades
-            if isinstance(x, str) and not x.isupper() and not x.istitle()
+            if isinstance(x, str) and not x.isupper()
         ]
         return listaFiltrada
     else:
         return []
 
-def Inorder(arbol):
+def Posorder(arbol):
     if arbol is not None and not isinstance(arbol, (int, float)):
         listaHabilidades = []
         listaHabilidades += Preorder(arbol["izquierda"])
@@ -309,7 +321,7 @@ def Inorder(arbol):
         
         listaFiltrada = [
             x for x in listaHabilidades
-            if isinstance(x, str) and not x.isupper() and not x.istitle()
+            if isinstance(x, str) and not x.isupper()
         ]
         return listaFiltrada
     else:
@@ -428,83 +440,86 @@ def agregarNinjas(archivoNinjas):
             formato=str({ninja["nombre"]:ninja})+"\n"
             archivo.write(formato)
 
-def verNinjas(archivoNinjas):
-    ninjas=cargarNinjas(archivoNinjas)
+def verNinjas():
     if len(ninjas)==0:
         print("No hay ninjas creados")
         return
-    print(f'''Elija la foma de lsitar los ninjas:
-          1. Orden de inscripción
-          2. Puntos
-          3. Nombre''')
-    forma=int(input("Ingrese el número de la opción: "))
-    if forma == 1:
-        for i, ninja in enumerate(ninjas):
-            arbol= ninja["habilidades"]
-            listaHabilidades=Preorder(arbol)
-            print(f'''--------------------Ninja {i+1}--------------------:
-                Nombre: {ninja["nombre"]}
-                Fuerza: {ninja["fuerza"]}
-                Agilidad: {ninja["agilidad"]}
-                Resistencia: {ninja["resistencia"]}
-                Estilo: {ninja["estilo"]}
-                Habilidades: {listaHabilidades}
-                Puntos: {ninja["puntos"]}
-                Victorias: {ninja["victorias"]}
-                Derrotas: {ninja["derrotas"]}
-                Posicion: {ninja["posicion"]}''')
-            print("--------------------------------------------------------\n")
-    elif forma == 2:
-        lista_ninjas = ninjas.copy()
-        n = len(lista_ninjas)
-        for i in range(n):
-            for j in range(0, n - i - 1):
-                if lista_ninjas[j]["puntos"] < lista_ninjas[j + 1]["puntos"]:
-                    lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
-            print("Puntos de los ninjas ordenados de mayor a menor:")
-            for ninja in lista_ninjas:
-                arbol= ninja["habilidades"]
-                listaHabilidades=Preorder(arbol)
-                print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
-            Nombre: {ninja["nombre"]}
-            Fuerza: {ninja["fuerza"]}
-            Agilidad: {ninja["agilidad"]}
-            Resistencia: {ninja["resistencia"]}
-            Estilo: {ninja["estilo"]}
-            Habilidades: {listaHabilidades}
-            Victorias: {ninja["victorias"]}
-            Derrotas: {ninja["derrotas"]}
-            Posicion: {ninja["posicion"]}
-            --------------------------------------------------------------------------------\n''')
-    elif forma == 3:
-        lista_ninjas = ninjas.copy()
-        n = len(lista_ninjas)
-        for i in range(n):
-            for j in range(0, n - i - 1):
-                if lista_ninjas[j]["nombre"].lower() > lista_ninjas[j + 1]["nombre"].lower():
-                    lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
+    while True:
+        print(f'''Elija la foma de listar los ninjas:
+            1. Orden de inscripción
+            2. Puntos
+            3. Nombre''')
+        forma=input("Ingrese el número de la opción: ")
+        if forma.isdigit():
+            if forma == "1":
+                for i, ninja in enumerate(ninjas):
+                    arbol= ninja["habilidades"]
+                    listaHabilidades=Preorder(arbol)
+                    print(f'''--------------------Ninja {i+1}--------------------:
+                        Nombre: {ninja["nombre"]}
+                        Fuerza: {ninja["fuerza"]}
+                        Agilidad: {ninja["agilidad"]}
+                        Resistencia: {ninja["resistencia"]}
+                        Estilo: {ninja["estilo"]}
+                        Habilidades: {listaHabilidades}
+                        Puntos: {ninja["puntos"]}
+                        Victorias: {ninja["victorias"]}
+                        Derrotas: {ninja["derrotas"]}
+                        Posicion: {ninja["posicion"]}''')
+                    print("--------------------------------------------------------\n")
+            elif forma == "2":
+                lista_ninjas = ninjas.copy()
+                n = len(lista_ninjas)
+                for i in range(n):
+                    for j in range(0, n - i - 1):
+                        if lista_ninjas[j]["puntos"] < lista_ninjas[j + 1]["puntos"]:
+                            lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
+                    print("Puntos de los ninjas ordenados de mayor a menor:")
+                    for ninja in lista_ninjas:
+                        arbol= ninja["habilidades"]
+                        listaHabilidades=Preorder(arbol)
+                        print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
+                    Nombre: {ninja["nombre"]}
+                    Fuerza: {ninja["fuerza"]}
+                    Agilidad: {ninja["agilidad"]}
+                    Resistencia: {ninja["resistencia"]}
+                    Estilo: {ninja["estilo"]}
+                    Habilidades: {listaHabilidades}
+                    Victorias: {ninja["victorias"]}
+                    Derrotas: {ninja["derrotas"]}
+                    Posicion: {ninja["posicion"]}
+                    --------------------------------------------------------------------------------\n''')
+            elif forma == "3":
+                lista_ninjas = ninjas.copy()
+                n = len(lista_ninjas)
+                for i in range(n):
+                    for j in range(0, n - i - 1):
+                        if lista_ninjas[j]["nombre"].lower() > lista_ninjas[j + 1]["nombre"].lower():
+                            lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
 
-            print("Ninjas ordenados por nombre (alfabéticamente):")
-            for ninja in lista_ninjas:
-                arbol= ninja["habilidades"]
-                listaHabilidades=Preorder(arbol)
-                print(f'''-------------------- Ninja: {ninja["nombre"]} --------------------:
-            Puntos: {ninja["puntos"]}
-            Fuerza: {ninja["fuerza"]}
-            Agilidad: {ninja["agilidad"]}
-            Resistencia: {ninja["resistencia"]}
-            Estilo: {ninja["estilo"]}
-            Habilidades: {listaHabilidades}
-            Victorias: {ninja["victorias"]}
-            Derrotas: {ninja["derrotas"]}
-            Posicion: {ninja["posicion"]}
-            --------------------------------------------------------------------------------\n''')
-    else:
-        print("Opción no válida.")
-        return
+                    print("Ninjas ordenados por nombre (alfabéticamente):")
+                    for ninja in lista_ninjas:
+                        arbol= ninja["habilidades"]
+                        listaHabilidades=Preorder(arbol)
+                        print(f'''-------------------- Ninja: {ninja["nombre"]} --------------------:
+                    Puntos: {ninja["puntos"]}
+                    Fuerza: {ninja["fuerza"]}
+                    Agilidad: {ninja["agilidad"]}
+                    Resistencia: {ninja["resistencia"]}
+                    Estilo: {ninja["estilo"]}
+                    Habilidades: {listaHabilidades}
+                    Victorias: {ninja["victorias"]}
+                    Derrotas: {ninja["derrotas"]}
+                    Posicion: {ninja["posicion"]}
+                    --------------------------------------------------------------------------------\n''')
+            else:
+                print("Opción no válida.")
+            return
+        else:
+            print("Opción no válida, Solo números.")
+            continue
 
-def buscarNinja(archivoNinjas):
-    ninjas=cargarNinjas(archivoNinjas)
+def buscarNinja():
     if len(ninjas)==0:
         print("No hay ninjas")
         return
@@ -645,7 +660,6 @@ def actualizarNinja(archivoNinjas):
             archivo.write(str({ninja["nombre"]: ninja}) + "\n")
 
 def eliminarNinja(archivoNinjas):
-    ninjas = cargarNinjas(archivoNinjas)
     nombreNinja = input("Ingrese el nombre del ninja a eliminar: ")
     encontrado = False
     for i in range(len(ninjas)):
@@ -676,9 +690,9 @@ def menuAdministrador(usuario,contraseña):
                 case "1":
                     agregarNinjas(archivoNinjas)
                 case "2":
-                    verNinjas(archivoNinjas)
+                    verNinjas()
                 case "3":
-                    buscarNinja(archivoNinjas)
+                    buscarNinja()
                 case "4":
                     actualizarNinja(archivoNinjas)
                 case "5":
@@ -693,6 +707,207 @@ def menuAdministrador(usuario,contraseña):
         print("Contraseña o usuario incorrectos. Acceso denegado")
         return
 
+def puntajes(habilidad):
+    if habilidad in habilidadesNinjas["Habilidades Ofensivas"]["Kenjutsu (corto alcance)"]:
+        puntaje=20
+    elif habilidad in habilidadesNinjas["Habilidades Ofensivas"]["Sojutsu (Arma Lanzable)"]:
+        puntaje=30
+    elif habilidad in habilidadesNinjas["Habilidades Ofensivas"]["Taijutsu (cuerpo a cuerpo)"]:
+        puntaje=34
+    elif habilidad in habilidadesNinjas["Habilidades Ofensivas"]["Ninjutsu (Habilidades magicas)"]:
+        puntaje=50
+    elif habilidad in habilidadesNinjas["Habilidades Defensivas"]["Kumai (Escudo)"]:
+        puntaje=0.4
+    elif habilidad in habilidadesNinjas["Habilidades Defensivas"]["Hichy (camuflaje)"]:
+        puntaje=1
+    elif habilidad in habilidadesNinjas["Habilidades Defensivas"]["Blink (bloqueo)"]:
+        puntaje=0.6
+    
+    return puntaje
+
+def combate():
+    print("Puedes simular un combate de única batalla")
+    print("Este combate es solo de práctica no afecta tu clasificación general del torneo")
+    print("Selecciona tu Ninja preferido")
+    verNinjas()
+    nombreNinjaUsuario = input("Ingrese el nombre del ninja que desee: ")
+    if nombreNinjaUsuario.isalpha():
+        for ninja in ninjas:
+            if nombreNinjaUsuario.upper() == ninja["nombre"]:
+                habilidadesNinjaElegido=ninja["habilidades"]
+                print("Ninja seleccionado: ", nombreNinjaUsuario.upper())
+                while True:
+                    print(f'''Que tipo de ataque deseas que tenga tu Ninja: 
+                        1. Defensivo
+                        2. Ofensivo
+                        3. Equilibrado''')#1. posorder, 2. preorder , 3. inorder
+                    opcion = input("Ingrese la opción que desee: ")
+                    if opcion.isdigit():
+                        match opcion:
+                            case "1":
+                                ataque=Posorder(habilidadesNinjaElegido)
+                                print("Ataque Defensivo: ", ataque)
+                                break
+                            case "2":
+                                ataque=Preorder(habilidadesNinjaElegido)
+                                print("Ataque Ofensivo: ", ataque)
+                                break
+                            case "3":
+                                ataque=Inorder(habilidadesNinjaElegido)
+                                print("Ataque Equilibrado: ", ataque)
+                                break
+                            case _:
+                                print("Opción no válida")
+                                continue
+                    else:
+                        print("Opción no válida")
+                        continue
+                print("Selecciona tu rival: ")
+                verNinjas()
+                nombreNinjaRival = input("Ingrese el nombre del ninja que desee: ")
+                if nombreNinjaRival.isalpha():
+                    for ninja in ninjas:
+                        if nombreNinjaRival.upper() == ninja["nombre"]:
+                            habilidadesNinjaRival=ninja["habilidades"]
+                            print("Rival seleccionado: ", nombreNinjaRival)
+                            print("La computadora esta sellecionando el ataque del rival...")
+                            aleatorio=random.randint(1,3)
+                            match aleatorio:
+                                case 1:
+                                    ataqueRival=Posorder(habilidadesNinjaRival)
+                                case 2:
+                                    ataqueRival=Preorder(habilidadesNinjaRival)
+                                case 3:
+                                    ataqueRival=Inorder(habilidadesNinjaRival)
+                            print("Ataque del rival: ", ataqueRival)
+                            print("El mejor de 3 gana la partida.......")
+                            print("Si uno gana 2 rondas seguidas gana la partida")
+                            print("Si ambos ganan una ronda cada uno la partida sigue hasta la tercera ronda")
+                            print("\n-------------------------EL COMBATE HA EMPEZADO----------------------------\n")
+                            vidaElegido=100
+                            vidaRival=100
+                            victoriasAmigas=0
+                            victoriasRival=0
+                            rondas=1
+                            contador=0
+                            while True:
+                                print("\nContador victorias:    TÚ: ", victoriasAmigas, "  RIVAL: ", victoriasRival,"\n")
+                                print("\n-------------------------RONDA N°", rondas, "----------------------------\n")
+                                print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                puntajeAmigo=puntajes(ataque[contador])
+                                puntajeRival=puntajes(ataqueRival[contador])
+                                print(f'''Tu habilidad tirada fue {ataque[contador]} --------------- La habilidad tirada de tu rival fue {ataqueRival[contador]}''')
+                                if puntajeAmigo<=1 and puntajeRival<=1:
+                                    print("Ambos ninjas han tirado habilidades defensivas\n")
+                                    print("Empate\n")
+                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                elif puntajeAmigo<=1 and puntajeRival>1:
+                                    print("Tu rival ha tirado una habilidad ofensiva y tu una defensiva\n")
+                                    vidaElegido-=puntajeRival*puntajeAmigo #vida 100/// 100-50*0.5
+                                    if vidaElegido<=0:
+                                        vidaElegido=0
+                                    print("Te has defendido con exito, redujiste al daño del ataque del rival en un ",puntajeAmigo*100,"%\n")
+                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                elif puntajeAmigo>1 and puntajeRival<=1:
+                                    print("Tu rival ha tirado una habilidad defensiva y tu una ofensiva\n")
+                                    vidaRival-=puntajeAmigo*puntajeRival #vida 100/// 100-50*0.5
+                                    if vidaRival<=0:
+                                        vidaRival=0
+                                    print("Tu rival se ha defendido con exito, se redujo el daño de tu ataque en un ",puntajeRival*100,"%\n")
+                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                elif puntajeAmigo>1 and puntajeRival>1:
+                                    print("Ambos ninjas han tirado habilidades ofensivas\n")
+                                    vidaElegido-=puntajeRival
+                                    vidaRival-=puntajeAmigo
+                                    if vidaElegido<=0:
+                                        vidaElegido=0
+                                    
+                                    if vidaRival<=0:
+                                        vidaRival=0
+                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+                                
+                                if vidaElegido==0:
+                                    rondas+=1
+                                    print("Tu rival ha ganado la ronda\n")
+                                    print("\n-----------------------------FIN RONDA -------------------------------\n")
+                                    victoriasRival+=1
+                                    vidaElegido=100
+                                    vidaRival=100
+                                elif vidaRival==0:
+                                    rondas+=1
+                                    print("Tu has ganado la ronda\n")
+                                    print("\n-----------------------------FIN RONDA -------------------------------\n")
+                                    victoriasAmigas+=1
+                                    vidaElegido=100
+                                    vidaRival=100
+                                if contador==3:
+                                    contador+=0
+                                else:
+                                    contador+=1
+
+                                if victoriasAmigas==2:
+                                    print("Tu has ganado la partida\n")
+                                    print("Felicidades al ganador\n")
+                                    return
+                                elif victoriasRival==2:
+                                    print("Tu rival ha ganado la partida\n")
+                                    print("Sigamos practicando has jugado una buena partida\n")
+                                    return
+                                time.sleep(10)
+                else:
+                    print("El nombre son solo letras")
+                    continue
+        print("El nombre del ninja no coincide con ninguno")
+        return
+    else:
+        print("El nombre del ninja solo debe tener letras")
+
+
+                
+
+
+        
+def torneo(archivoNinjas,archivoJugador):
+    return
+def verRanking(archivoJugador):
+    return
+def guardarProgreso(archivoJugador):
+    return
+
+
+def accionesJugador(nombre):
+    archivoJugador = nombre+".txt"
+    if not os.path.exists(archivoJugador):
+        pass
+    print("\n-------------MENÚ DE JUEGO-----------\n")
+    while True:
+        print(f'''
+            1. Ver ninjas disponibles
+            2. Combate
+            3. Torneo
+            4. Ver ranking 
+            5. Guardar Progreso
+            6. Salir''')
+        opcion = input("Ingrese la opción que desee: ")
+        match opcion:
+            case "1":
+                verNinjas()
+            case "2":
+                combate()
+            case "3":
+                torneo(archivoNinjas, archivoJugador)
+            case "4":
+                verRanking(archivoJugador)
+            case "5":
+                guardarProgreso(archivoJugador)
+            case "6":
+                print("Hasta luego")
+                return
+            case _:
+                print("Opción no válida")
+                continue
+            
+
 def iniciarSesion(archivoUsuarios):
     if not os.path.exists(archivoUsuarios):
         print("No hay usuarios registrados")
@@ -705,7 +920,7 @@ def iniciarSesion(archivoUsuarios):
                 User=eval(linea.strip())
             if User["usuario"]==usuario and User["contraseña"]==contraseña:
                 print(f'''Bienvenido {User["nombre"]}''')
-                return #MENU
+                return accionesJugador(User["nombre"])
             else:
                 print("Usuario o contraseña incorrectos")
                 continue
@@ -732,6 +947,7 @@ def menuJugador():
 def menuPrincipal():
     cargarusuarios(archivoUsuarios)
     cargarNinjas(archivoNinjas)
+    print(ninjas)
     while True:
         print(f'''--------MENÚ PRINCIPAL--------
               1. Administrador
