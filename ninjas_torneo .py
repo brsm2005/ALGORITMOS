@@ -38,6 +38,7 @@ def registrarse(archivoUsuarios):
             palabras = nombreUsuario.split()
             if len(palabras) != 2:
                 print("Debe ingresar solo nombre y apellido")
+                return registrarse(archivoUsuarios)
             else:
                 if all(palabra.isalpha() for palabra in palabras):
                     usuario = f"{palabras[0].lower()}.{palabras[1].lower()}@gmail.com"
@@ -46,7 +47,15 @@ def registrarse(archivoUsuarios):
                     return registrarse(archivoUsuarios)
         except:
             print("Ocurrió un error")
-        identificacion=input("Ingrese su cédula: ")
+        try:
+            identificacion=input("Ingrese su cédula: ")
+            if all(identificacion.isdigit() for identificacion in identificacion):
+                pass
+            else:
+                print("Solo se permiten números en la cédula. Saliendo del sistema")
+                return registrarse(archivoUsuarios)
+        except:
+            print("Ocurrió un error")
         edad= input("Ingrese su edad: ")
         contraseña=input("Ingrese su contraseña (debe ser de 8 caracteres o más, incluir una mayúscula y un número): ")
         while len(contraseña) < 8 or not any(char.isupper() for char in contraseña) or not any(char.isdigit() for char in contraseña):
@@ -82,7 +91,7 @@ def registrarse(archivoUsuarios):
             if all(identificacion.isdigit() for identificacion in identificacion):
                 pass
             else:
-                print("Solo se permiten números en la cédula.")
+                print("Solo se permiten números en la cédula. Saliendo del sistema")
                 return registrarse(archivoUsuarios)
         except:
             print("Ocurrió un error")
