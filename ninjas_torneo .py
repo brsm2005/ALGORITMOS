@@ -515,15 +515,17 @@ def verNinjas():
             elif forma == "2":
                 lista_ninjas = ninjas.copy()
                 n = len(lista_ninjas)
+
                 for i in range(n):
                     for j in range(0, n - i - 1):
                         if lista_ninjas[j]["puntos"] < lista_ninjas[j + 1]["puntos"]:
                             lista_ninjas[j], lista_ninjas[j + 1] = lista_ninjas[j + 1], lista_ninjas[j]
-                    print("Puntos de los ninjas ordenados de mayor a menor:")
-                    for ninja in lista_ninjas:
-                        arbol= ninja["habilidades"]
-                        listaHabilidades=Preorder(arbol)
-                        print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
+
+                print("Puntos de los ninjas ordenados de mayor a menor:")
+                for ninja in lista_ninjas:
+                    arbol = ninja["habilidades"]
+                    listaHabilidades = Preorder(arbol)
+                    print(f'''--------------------Ninjas con {ninja["puntos"]} puntos--------------------:
                     Nombre: {ninja["nombre"]}
                     Fuerza: {ninja["fuerza"]}
                     Agilidad: {ninja["agilidad"]}
@@ -798,140 +800,139 @@ def combate():
     print("Selecciona tu Ninja preferido")
     verNinjas()
     nombreNinjaUsuario = input("Ingrese el nombre del ninja que desee: ")
+    
     if nombreNinjaUsuario.isalpha():
         for ninja in ninjas:
             if nombreNinjaUsuario.upper() == ninja["nombre"]:
-                habilidadesNinjaElegido=ninja["habilidades"]
+                habilidadesNinjaElegido = ninja["habilidades"]
                 print("Ninja seleccionado: ", nombreNinjaUsuario.upper())
+                
                 while True:
-                    print(f'''Que tipo de ataque deseas que tenga tu Ninja: 
+                    print(f'''¿Qué tipo de ataque deseas que tenga tu Ninja?
                         1. Defensivo
                         2. Ofensivo
-                        3. Equilibrado''')#1. posorder, 2. preorder , 3. inorder
+                        3. Equilibrado''')
                     opcion = input("Ingrese la opción que desee: ")
+                    
                     if opcion.isdigit():
                         match opcion:
                             case "1":
-                                ataque=Posorder(habilidadesNinjaElegido)
+                                ataque = Posorder(habilidadesNinjaElegido)
                                 print("Ataque Defensivo: ", ataque)
                                 break
                             case "2":
-                                ataque=Preorder(habilidadesNinjaElegido)
+                                ataque = Preorder(habilidadesNinjaElegido)
                                 print("Ataque Ofensivo: ", ataque)
                                 break
                             case "3":
-                                ataque=Inorder(habilidadesNinjaElegido)
+                                ataque = Inorder(habilidadesNinjaElegido)
                                 print("Ataque Equilibrado: ", ataque)
                                 break
                             case _:
                                 print("Opción no válida")
-                                continue
                     else:
                         print("Opción no válida")
-                        continue
-                print("Selecciona tu rival: ")
+
+                print("Selecciona tu rival:")
                 verNinjas()
                 nombreNinjaRival = input("Ingrese el nombre del ninja que desee: ")
+                
                 if nombreNinjaRival.isalpha():
                     for ninja in ninjas:
                         if nombreNinjaRival.upper() == ninja["nombre"]:
-                            habilidadesNinjaRival=ninja["habilidades"]
+                            habilidadesNinjaRival = ninja["habilidades"]
                             print("Rival seleccionado: ", nombreNinjaRival)
-                            print("La computadora esta sellecionando el ataque del rival...")
-                            aleatorio=random.randint(1,3)
+                            print("La computadora está seleccionando el ataque del rival...")
+                            
+                            aleatorio = random.randint(1, 3)
                             match aleatorio:
                                 case 1:
-                                    ataqueRival=Posorder(habilidadesNinjaRival)
+                                    ataqueRival = Posorder(habilidadesNinjaRival)
                                 case 2:
-                                    ataqueRival=Preorder(habilidadesNinjaRival)
+                                    ataqueRival = Preorder(habilidadesNinjaRival)
                                 case 3:
-                                    ataqueRival=Inorder(habilidadesNinjaRival)
+                                    ataqueRival = Inorder(habilidadesNinjaRival)
+
                             print("Ataque del rival: ", ataqueRival)
-                            print("El mejor de 3 gana la partida.......")
+                            print("El mejor de 3 gana la partida...")
                             print("Si uno gana 2 rondas seguidas gana la partida")
-                            print("Si ambos ganan una ronda cada uno la partida sigue hasta la tercera ronda")
+                            print("Si ambos ganan una ronda, la partida sigue hasta la tercera ronda")
                             print("\n-------------------------EL COMBATE HA EMPEZADO----------------------------\n")
-                            vidaElegido=100
-                            vidaRival=100
-                            victoriasAmigas=0
-                            victoriasRival=0
-                            rondas=1
-                            contador=0
+                            
+                            vidaElegido = 100
+                            vidaRival = 100
+                            victoriasAmigas = 0
+                            victoriasRival = 0
+                            rondas = 1
+                            contador = 0
+
                             while True:
-                                print("\nContador victorias:    TÚ: ", victoriasAmigas, "  RIVAL: ", victoriasRival,"\n")
+                                print("\nContador victorias:    TÚ:", victoriasAmigas, " RIVAL:", victoriasRival)
                                 print("\n-------------------------RONDA N°", rondas, "----------------------------\n")
                                 print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                puntajeAmigo=puntajes(ataque[contador])
-                                puntajeRival=puntajes(ataqueRival[contador])
+                                
+                                puntajeAmigo = puntajes(ataque[contador])
+                                puntajeRival = puntajes(ataqueRival[contador])
+                                
                                 print(f'''Tu habilidad tirada fue {ataque[contador]} --------------- La habilidad tirada de tu rival fue {ataqueRival[contador]}''')
-                                if puntajeAmigo<=1 and puntajeRival<=1:
+
+                                if puntajeAmigo <= 1 and puntajeRival <= 1:
                                     print("Ambos ninjas han tirado habilidades defensivas\n")
                                     print("Empate\n")
-                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                elif puntajeAmigo<=1 and puntajeRival>1:
-                                    print("Tu rival ha tirado una habilidad ofensiva y tu una defensiva\n")
-                                    vidaElegido-=puntajeRival*puntajeAmigo #vida 100/// 100-50*0.5
-                                    vidaRival-=puntajeRival*(puntajeAmigo+0.2)
-                                    if vidaElegido<=0:
-                                        vidaElegido=0
-                                    print("Te has defendido con exito, redujiste al daño del ataque del rival en un ",puntajeAmigo*100,"%\n")
-                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                elif puntajeAmigo>1 and puntajeRival<=1:
-                                    print("Tu rival ha tirado una habilidad defensiva y tu una ofensiva\n")
-                                    vidaRival-=puntajeAmigo*puntajeRival #vida 100/// 100-50*0.5
-                                    vidaElegido-=puntajeAmigo*(puntajeRival+0.2)
-                                    if vidaRival<=0:
-                                        vidaRival=0
-                                    print("Tu rival se ha defendido con exito, se redujo el daño de tu ataque en un ",puntajeRival*100,"%\n")
-                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                elif puntajeAmigo>1 and puntajeRival>1:
-                                    print("Ambos ninjas han tirado habilidades ofensivas\n")
-                                    vidaElegido-=puntajeRival
-                                    vidaRival-=puntajeAmigo
-                                    print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
-                                if (vidaElegido<=0 or vidaRival<=0) or (vidaElegido<=0 and vidaRival<=0):
-                                    if vidaElegido<=0:
-                                        vidaElegido=0
-                                    elif vidaRival<=0:
-                                        vidaRival=0
-                                    else:
-                                        print("Ambos ninjas han muerto")
-                                        vidaElegido=0
-                                        vidaRival=0
-                                if vidaElegido==0 and vidaRival==0:
-                                    print("Ambos ninjas han muerto")
-                                    print("Ninguno obtine punto")
-                                if vidaElegido==0:
-                                    rondas+=1
-                                    print("Tu rival ha ganado la ronda\n")
-                                    print("\n-----------------------------FIN RONDA -------------------------------\n")
-                                    victoriasRival+=1
-                                    vidaElegido=100
-                                    vidaRival=100
-                                elif vidaRival==0:
-                                    rondas+=1
-                                    print("Tu has ganado la ronda\n")
-                                    print("\n-----------------------------FIN RONDA -------------------------------\n")
-                                    victoriasAmigas+=1
-                                    vidaElegido=100
-                                    vidaRival=100
-                                if contador==3:
-                                    contador+=0
-                                else:
-                                    contador+=1
+                                
+                                elif puntajeAmigo <= 1 and puntajeRival > 1:
+                                    print("Tu rival ha tirado una habilidad ofensiva y tú una defensiva\n")
+                                    vidaElegido -= puntajeRival * puntajeAmigo
+                                    vidaRival -= puntajeRival * (puntajeAmigo + 0.2)
 
-                                if victoriasAmigas==2:
-                                    print("Tu has ganado la partida\n")
-                                    print("Felicidades al ganador\n")
+                                elif puntajeAmigo > 1 and puntajeRival <= 1:
+                                    print("Tu rival ha tirado una habilidad defensiva y tú una ofensiva\n")
+                                    vidaRival -= puntajeAmigo * puntajeRival
+                                    vidaElegido -= puntajeAmigo * (puntajeRival + 0.2)
+
+                                elif puntajeAmigo > 1 and puntajeRival > 1:
+                                    print("Ambos ninjas han tirado habilidades ofensivas\n")
+                                    vidaElegido -= puntajeRival
+                                    vidaRival -= puntajeAmigo
+
+                                vidaElegido = max(0, vidaElegido)
+                                vidaRival = max(0, vidaRival)
+
+                                print("Tu vida es: ", vidaElegido, " ------- la vida de tu rival es: ", vidaRival)
+
+                                if vidaElegido == 0 and vidaRival == 0:
+                                    print("Ambos ninjas han muerto\nNinguno obtiene punto")
+                                
+                                elif vidaElegido == 0:
+                                    print("Tu rival ha ganado la ronda\n")
+                                    victoriasRival += 1
+                                    rondas += 1
+                                    vidaElegido = 100
+                                    vidaRival = 100
+                                
+                                elif vidaRival == 0:
+                                    print("Tú has ganado la ronda\n")
+                                    victoriasAmigas += 1
+                                    rondas += 1
+                                    vidaElegido = 100
+                                    vidaRival = 100
+                                
+                                print("\n-----------------------------FIN RONDA -------------------------------\n")
+
+                                contador = (contador + 1) % len(ataque)
+
+                                if victoriasAmigas == 2:
+                                    print("¡Tú has ganado la partida!\nFelicidades al ganador\n")
                                     return
-                                elif victoriasRival==2:
-                                    print("Tu rival ha ganado la partida\n")
-                                    print("Sigamos practicando has jugado una buena partida\n")
+                                elif victoriasRival == 2:
+                                    print("Tu rival ha ganado la partida\nSigamos practicando, has jugado una buena partida\n")
                                     return
+
                                 time.sleep(10)
                 else:
-                    print("El nombre son solo letras")
+                    print("El nombre del rival debe contener solo letras")
                     continue
+
         print("El nombre del ninja no coincide con ninguno")
         return
     else:
@@ -959,7 +960,6 @@ def torneo(archivoNinjas, archivoJugador):
             ganadores = deque()
             
             while len(cola_torneo) >= 2:
-                # Sacar dos ninjas de la cola para combatir|
                 ninja1 = cola_torneo.popleft()
                 ninja2 = cola_torneo.popleft()
                 
@@ -1106,7 +1106,6 @@ def iniciarSesion(archivoUsuarios):
 
     with open(archivoUsuarios, "r") as archivo:
         for linea in archivo:
-            # Ignorar líneas en blanco
             if not linea.strip():
                 continue
             
